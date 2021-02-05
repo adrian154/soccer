@@ -1,0 +1,34 @@
+{
+    "webserver": {
+        "port": 80
+    },
+    "gameserver": {
+        "port": 8080,
+        "heartbeatInterval": 3000,
+        "maxPlayers": 30,
+        "ticksPerSecond": 60
+    },
+    "gamecore": {
+        "ticksPerSecond": 60,
+        "field": {
+            "width": 600,
+            "height": 800
+        },
+        "player": {
+            "acceleration": 2400,
+            "radius": 20,
+            "friction": 0.13,
+            "mass": 200
+        },
+        "ball": {
+            "radius": 13,
+            "friction": 0.08,
+            "mass": 100,
+            "bounciness": 0.8
+        },
+        "goals": {
+            "height": 50,
+            "width": 250
+        }
+    }
+}
