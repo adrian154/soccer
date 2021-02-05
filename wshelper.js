@@ -1,6 +1,8 @@
 // socket.io-inspired websocket wrapper
 
 // dependencies
+const fs = require("fs");
+const https = require("https");
 const WebSocket = require("ws");
 
 // helper
@@ -52,10 +54,24 @@ const Client = class {
 
 const Server = class {
 
-    constructor(port) {
+    constructor(port, ssl) {
 
         // set up internals
-        this.ws = new WebSocket.Server({port: port});
+        if(ssl) {
+            this.ws = new WebSocket.Server({
+                server: (() => {
+                    const server = https.createServer({
+                        key: fs.readFileSync(ssl.keyPath),
+                        cert: fs.readFileSync(ssl.certPath)
+                    });
+                    server.listen(port);
+                    return server;
+                })()
+            });
+        } else {
+            this.ws = new WebSocket.Server({port: port});
+        }
+        
         this.clients = [];
 
         // set up event handling layer        

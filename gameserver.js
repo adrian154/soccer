@@ -12,7 +12,7 @@ module.exports = class {
         this.engine = engine;
         
         // setup event handlers
-        this.ws = new WSHelper.Server(config.port);
+        this.ws = new WSHelper.Server(config.port, config.ssl);
 
         this.ws.on("connect", (client) => {
 

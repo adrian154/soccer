@@ -2,9 +2,9 @@ const doNothing = () => {};
 
 const WSClient = class {
     
-    constructor(host) {
+    constructor(host, port) {
         
-        this.ws = new WebSocket(host);
+        this.ws = new WebSocket(`${window.location.protocol === "https:" ? "wss" : "ws"}://${host}:${port}`);
         
         this.eventHandlers = {
             close: doNothing,
@@ -67,10 +67,10 @@ const WSClient = class {
 };
 
 const WS = {
-    create: (host) => new WSClient(host),
-    connect: async (host) => {
-        const socket = new WSClient(host);
-        await socket.connect();
+    create: (host, port) => new WSClient(host, port),
+    connect: async (host, port) => {
+        const socket = new WSClient(host, port);
+        await socket.waitConnect();
         return socket;
     }
 };

@@ -184,7 +184,7 @@ fetch("/game-info")
         canvas.height = gameProperties.field.height;
 
         // setup socket
-        socket = WS.create(`ws://${window.location.host}:${data.port}`);
+        socket = WS.create(window.location.host, data.port);
         setupSocket(socket);
         socket.waitConnect();
 
