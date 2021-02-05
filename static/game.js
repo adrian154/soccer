@@ -117,8 +117,7 @@ const draw = (ctx, game) => {
 
     // used to interpolate things
     // (not well, but.. it fills in the gaps, sort of.)
-    //const dt = (Date.now() - lastTickTime) / 1000;
-    let dt = 0;
+    const dt = (Date.now() - lastTickTime) / 1000;
     
     drawBackground(game, ctx);
     drawBall(game.ball, ctx, dt);
