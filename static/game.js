@@ -75,9 +75,12 @@ const drawBackground = (game, ctx) => {
     ctx.textAlign = "center";
     ctx.fillStyle = "#000000";
     ctx.fillText(game.score[0] + ":" + game.score[1], ctx.canvas.width / 2, ctx.canvas.height / 2 + 12);
-    ctx.globalAlpha = 1.0;
 
     // goals
+    const margin = (ctx.canvas.width - gameProperties.goals.width) / 2;
+    ctx.fillRect(margin, 0, gameProperties.goals.width, gameProperties.goals.height);
+    ctx.fillRect(margin, ctx.canvas.height - gameProperties.goals.height, gameProperties.goals.width, gameProperties.goals.height);
+    ctx.globalAlpha = 1.0;
 
 };
 

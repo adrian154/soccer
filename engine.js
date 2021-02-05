@@ -196,6 +196,18 @@ module.exports = class {
         ball.pos.x = nextPosX;
         ball.pos.y = nextPosY;
 
+        // check goals
+        // top goal
+        const margin = (config.field.width - config.goals.width) / 2;
+        if(ball.pos.x > margin && ball.pos.x < config.field.width - margin) {
+            if(ball.pos.y < config.goals.height) {
+                this.resetBall();
+                this.score[0]++;
+            } else if(ball.pos.y > config.field.height - config.goals.height) {
+                this.resetBall();
+                this.score[1]++;
+            }
+        }
     }
     
     tick() {
