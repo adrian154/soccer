@@ -1,6 +1,6 @@
 // constants
 // team colors = hues
-const TEAM_COLORS = [0, 120];
+const TEAM_COLORS = [50, 200];
 
 // canvas
 const canvas = document.getElementById("game-canvas");
@@ -25,6 +25,9 @@ let animating = false;
 
 // helpers
 const getPlayer = (game, id) => game.players.find(player => player.id == id);
+const updateName = () => {
+    socket.send("set name", prompt("What would you like to change your name to?"));
+};
 
 // gameloop methods
 const setupSocket = (socket) => {
@@ -42,7 +45,6 @@ const setupSocket = (socket) => {
         if(payload.tickTime - Date.now() > 20) {
             console.error("Dropping a tick due to excessive latency");
         } else {
-            const isFirstTick = Boolean(game);
             lastTickTime = payload.tickTime;
             game = payload;
             if(!animating) {
@@ -78,7 +80,9 @@ const drawBackground = (game, ctx) => {
 
     // goals
     const margin = (ctx.canvas.width - gameProperties.goals.width) / 2;
+    ctx.fillStyle = `hsl(${TEAM_COLORS[0]}, 75%, 50%)`;
     ctx.fillRect(margin, 0, gameProperties.goals.width, gameProperties.goals.height);
+    ctx.fillStyle = `hsl(${TEAM_COLORS[1]}, 75%, 50%)`;
     ctx.fillRect(margin, ctx.canvas.height - gameProperties.goals.height, gameProperties.goals.width, gameProperties.goals.height);
     ctx.globalAlpha = 1.0;
 
@@ -104,15 +108,26 @@ const drawPlayer = (player, ctx, dt) => {
     const isSelf = player.id === selfID;
     ctx.fillStyle = `hsl(${TEAM_COLORS[player.team]}, ${isSelf ? 100 : 75}%, 50%)`;
 
+    const x = player.pos.x + dt * player.vel.x;
+    const y = player.pos.y + dt * player.vel.y;
     ctx.beginPath();
     ctx.arc(
-        player.pos.x + dt * player.vel.x,
-        player.pos.y + dt * player.vel.y,
+        x, y,
         gameProperties.playerRadius,
         0, 2 * Math.PI  
     );
     ctx.closePath();
     ctx.fill();
+
+    ctx.textAlign = "center";
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "16px Arial";
+    ctx.fillText(String(player.id), x, y + 6);
+
+    ctx.fillStyle = "#000000";
+    ctx.font = "bold 12px Arial";
+    ctx.fillText(player.name, x, y - 25);
 
 };
 
@@ -144,6 +159,7 @@ const handleKey = (key, state) => {
         case "a": controls.left = state; break;
         case "s": controls.down = state; break;
         case "d": controls.right = state; break;
+        case "g": if(state) updateName(); break;
     }
 
     if(socket.connected()) {
