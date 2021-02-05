@@ -42,14 +42,10 @@ const setupSocket = (socket) => {
 
     socket.message("tick", (payload) => {
         
-        if(payload.tickTime - Date.now() > 60) {
-            console.error("Dropping a tick due to excessive latency");
-        } else {
-            lastTickTime = payload.tickTime;
-            game = payload;
-            if(!animating) {
-                animate();
-            }
+        lastTickTime = payload.tickTime;
+        game = payload;
+        if(!animating) {
+            animate();
         }
 
     });
