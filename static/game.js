@@ -42,11 +42,12 @@ const setupSocket = (socket) => {
 
     socket.message("tick", (payload) => {
         
-        lastTickTime = payload.tickTime;
         game = payload;
         if(!animating) {
             animate();
         }
+
+        lastTickTime = Date.now();
 
     });
 

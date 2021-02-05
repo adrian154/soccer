@@ -89,8 +89,7 @@ module.exports = class {
                 payload: {
                     players: this.engine.players,
                     score: this.engine.score,
-                    ball: this.engine.ball,
-                    tickTime: Date.now()
+                    ball: this.engine.ball
                 }
             });
 
