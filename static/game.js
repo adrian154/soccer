@@ -3,6 +3,7 @@
 const TEAM_COLORS = [50, 200];
 
 // canvas
+const modal = document.getElementById("modal");
 const canvas = document.getElementById("game-canvas");
 const ctx = canvas.getContext("2d");
 
@@ -28,9 +29,6 @@ let animating = false;
 // note: lerp isn't actually linear, it's whatever scheme i'm toying with at the moment
 const lerp = (start, end, dt) => start + dt * (end - start);
 const getPlayer = (game, id) => game.players.find(player => player.id == id);
-const updateName = () => {
-    socket.send("set name", prompt("What would you like to change your name to?"));
-};
 
 // gameloop methods
 const setupSocket = (socket) => {
@@ -67,8 +65,7 @@ const setupSocket = (socket) => {
 const drawBackground = (ctx, dt) => {
 
     // backdrop
-    ctx.fillStyle  ="#ffffff";
-    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
     // center line
     ctx.lineWidth = 4;
@@ -134,7 +131,7 @@ const drawPlayer = (prev, cur, ctx, dt) => {
     ctx.fillText(String(prev.id), x, y + 6);
 
     ctx.fillStyle = "#000000";
-    ctx.font = "bold 12px Arial";
+    ctx.font = isSelf ? "bold 14px Arial" : "12px Arial";
     ctx.fillText(prev.name, x, y - 25);
 
 };
@@ -171,11 +168,10 @@ const animate = () => {
 const handleKey = (key, state) => {
     
     switch(key) {
-        case "w": controls.up = state; break;
-        case "a": controls.left = state; break;
-        case "s": controls.down = state; break;
-        case "d": controls.right = state; break;
-        case "g": if(state) updateName(); break;
+        case "KeyW": controls.up = state; break;
+        case "KeyA": controls.left = state; break;
+        case "KeyS": controls.down = state; break;
+        case "KeyD": controls.right = state; break;
     }
 
     if(socket.connected()) {
@@ -184,8 +180,20 @@ const handleKey = (key, state) => {
 
 };
 
-window.addEventListener("keydown", (event) => handleKey(event.key, true));
-window.addEventListener("keyup", (event) => handleKey(event.key, false));
+window.addEventListener("keydown", (event) => {
+    handleKey(event.code, true);
+    if(event.key === "g") {
+        modal.style.display = "block";
+    }
+});
+window.addEventListener("keyup", (event) => {handleKey(event.code, false)});
+
+document.getElementById("field-name").addEventListener("keydown", (event) => {
+    if(event.key == "Enter") {
+        socket.send("set name", event.target.value);
+        modal.style.display = "none";
+    }
+});
 
 // connect
 fetch("/game-info") 

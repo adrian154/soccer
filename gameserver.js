@@ -39,6 +39,8 @@ module.exports = class {
         this.ws.message("set name", (client, payload) => {
             
             // validate name
+            if(!payload) return;
+            
             const name = payload.slice(0, 20).trim();
             if(name.length == 0) {
                 client.player.name = "unnamed";
