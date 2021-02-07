@@ -17,7 +17,8 @@ module.exports = class {
         
         // internal state
         this.resetBall();
-        this.players = [];
+        this.players = {};
+        this.numPlayers = 0;
         this.nextPlayerID = 0;
         this.score = [0, 0];
         this.eventHandlers = {
@@ -52,13 +53,15 @@ module.exports = class {
             team: id % 2 == 0 ? 0 : 1
         };
 
-        this.players.push(player);
+        this.players[id] = player;
+        this.numPlayers++;
         return player;
 
     }
 
     removePlayer(id) {
-        this.players.splice(this.players.findIndex(player => player.id === id), 1);
+        this.numPlayers--;
+        delete this.players[id];
     }
 
     resetBall() {
@@ -77,7 +80,7 @@ module.exports = class {
 
     updatePlayers(dt) {
 
-        for(const player of this.players) {
+        for(const player of Object.values(this.players)) {
             
             // update controls
             const accX = ((player.controls.left ? -1 : 0) + (player.controls.right ? 1 : 0)) * config.player.acceleration;
@@ -96,7 +99,7 @@ module.exports = class {
             let nextPosY = player.vel.y * dt + player.pos.y;
 
             // keep player outside of other players
-            for(const player2 of this.players) {
+            for(const player2 of Object.values(this.players)) {
                 if(player.id == player2.id) continue;
 
                 const dx = player2.pos.x - nextPosX;
@@ -140,7 +143,7 @@ module.exports = class {
         let nextPosY = ball.pos.y + ball.vel.y * dt;
 
         // update based on players
-        for(const player of this.players) {
+        for(const player of Object.values(this.players)) {
 
             let dx = nextPosX - player.pos.x;
             let dy = nextPosY - player.pos.y;
@@ -164,7 +167,7 @@ module.exports = class {
                 ball.vel.y = ballSpeed * dy / dist;
 
                 // de-overlap
-                const overlap = config.ball.radius + config.player.radius + 1 - dist;
+                const overlap = config.ball.radius + config.player.radius - dist;
                 nextPosX += overlap * dx / dist;
                 nextPosY += overlap * dy / dist;
 
@@ -214,8 +217,7 @@ module.exports = class {
 
         // on the first tick, run at normal speed
         // otherwise, adapt based on tick time fluctuations
-        let elapsed = this.lastTick ? Date.now() - this.lastTick : 1000 / config.ticksPerSecond;
-        let dt = elapsed / 1000;
+        let dt = 1 / config.ticksPerSecond;
 
         this.updatePlayers(dt);
         this.updateBall(dt);

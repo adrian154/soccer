@@ -4,9 +4,9 @@
     },
     "gameserver": {
         "port": 8080,
-        "heartbeatInterval": 3000,
+        "heartbeatInterval": 1000,
         "maxPlayers": 30,
-        "ticksPerSecond": 60
+        "ticksPerSecond": 20
     },
     "gamecore": {
         "ticksPerSecond": 60,
@@ -15,9 +15,9 @@
             "height": 800
         },
         "player": {
-            "acceleration": 2400,
+            "acceleration": 3400,
             "radius": 20,
-            "friction": 0.13,
+            "friction": 0.1,
             "mass": 200
         },
         "ball": {

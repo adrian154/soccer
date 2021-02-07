@@ -16,7 +16,7 @@ module.exports = class {
 
         this.ws.on("connect", (client) => {
 
-            if(engine.players.length < config.maxPlayers) {
+            if(engine.numPlayers < config.maxPlayers) {
                 client.player = engine.newPlayer();
                 client.alive = true;
                 client.send("init", client.player.id);
@@ -87,9 +87,12 @@ module.exports = class {
             const packet = JSON.stringify({
                 type: "tick",
                 payload: {
-                    players: this.engine.players,
+                    snapshot: {
+                        players: this.engine.players,
+                        ball: this.engine.ball
+                    },  
                     score: this.engine.score,
-                    ball: this.engine.ball
+                    time: Date.now()
                 }
             });
 

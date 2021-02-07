@@ -18,12 +18,14 @@ let socket;
 let selfID;
 
 // game state
-let lastTickTime;
-let game;
+let curSnapshot, prevSnapshot, curTime, prevTime, finishInterpTime;
+let score;
 let gameProperties;
 let animating = false;
 
 // helpers
+// note: lerp isn't actually linear, it's whatever scheme i'm toying with at the moment
+const lerp = (start, end, dt) => start + dt * (end - start);
 const getPlayer = (game, id) => game.players.find(player => player.id == id);
 const updateName = () => {
     socket.send("set name", prompt("What would you like to change your name to?"));
@@ -41,19 +43,27 @@ const setupSocket = (socket) => {
     });
 
     socket.message("tick", (payload) => {
-        
-        game = payload;
-        if(!animating) {
-            animate();
+
+        if(curSnapshot) {
+            prevSnapshot = curSnapshot;
+            prevTime = curTime;
         }
 
-        lastTickTime = Date.now();
+        curSnapshot = payload.snapshot;
+        curTime = payload.time;
+        score = payload.score;
+        finishInterpTime = Date.now() + (curTime - prevTime);
+
+        console.log("tick");
+        if(!animating && prevSnapshot && curSnapshot) {
+            animate();
+        }
 
     });
 
 };
 
-const drawBackground = (game, ctx) => {
+const drawBackground = (ctx, dt) => {
 
     // backdrop
     ctx.fillStyle  ="#ffffff";
@@ -73,7 +83,7 @@ const drawBackground = (game, ctx) => {
     ctx.font = "48px Arial";
     ctx.textAlign = "center";
     ctx.fillStyle = "#000000";
-    ctx.fillText(game.score[0] + ":" + game.score[1], ctx.canvas.width / 2, ctx.canvas.height / 2 + 12);
+    ctx.fillText(score[0] + ":" + score[1], ctx.canvas.width / 2, ctx.canvas.height / 2 + 12);
 
     // goals
     const margin = (ctx.canvas.width - gameProperties.goals.width) / 2;
@@ -85,13 +95,13 @@ const drawBackground = (game, ctx) => {
 
 };
 
-const drawBall = (ball, ctx, dt) => {
+const drawBall = (ctx, dt) => {
 
     ctx.fillStyle = "#000000";
     ctx.beginPath();
     ctx.arc(
-        ball.pos.x + ball.vel.x * dt,
-        ball.pos.y + ball.vel.y * dt,
+        lerp(prevSnapshot.ball.pos.x, curSnapshot.ball.pos.x, dt),
+        lerp(prevSnapshot.ball.pos.y, curSnapshot.ball.pos.y, dt),
         gameProperties.ballRadius,
         0, 2 * Math.PI
     );
@@ -100,13 +110,13 @@ const drawBall = (ball, ctx, dt) => {
 
 };
 
-const drawPlayer = (player, ctx, dt) => {
+const drawPlayer = (prev, cur, ctx, dt) => {
 
-    const isSelf = player.id === selfID;
-    ctx.fillStyle = `hsl(${TEAM_COLORS[player.team]}, ${isSelf ? 100 : 75}%, 50%)`;
+    const isSelf = prev.id === selfID;
+    ctx.fillStyle = `hsl(${TEAM_COLORS[prev.team]}, ${isSelf ? 100 : 75}%, 50%)`;
 
-    const x = player.pos.x + dt * player.vel.x;
-    const y = player.pos.y + dt * player.vel.y;
+    const x = lerp(prev.pos.x, cur.pos.x, dt);
+    const y = lerp(prev.pos.y, cur.pos.y, dt);
     ctx.beginPath();
     ctx.arc(
         x, y,
@@ -120,32 +130,40 @@ const drawPlayer = (player, ctx, dt) => {
 
     ctx.fillStyle = "#ffffff";
     ctx.font = "16px Arial";
-    ctx.fillText(String(player.id), x, y + 6);
+    ctx.fillText(String(prev.id), x, y + 6);
 
     ctx.fillStyle = "#000000";
     ctx.font = "bold 12px Arial";
-    ctx.fillText(player.name, x, y - 25);
+    ctx.fillText(prev.name, x, y - 25);
 
 };
 
-const draw = (ctx, game) => {
+const drawPlayers = (ctx, dt) => {
 
-    // used to interpolate things
-    // (not well, but.. it fills in the gaps, sort of.)
-    const dt = (Date.now() - lastTickTime) / 1000;
-    
-    drawBackground(game, ctx);
-    drawBall(game.ball, ctx, dt);
-
-    for(const player of game.players) {
-        drawPlayer(player, ctx, dt);
+    for(const playerID in prevSnapshot.players) {
+        if(curSnapshot.players[playerID]) {
+            drawPlayer(prevSnapshot.players[playerID], curSnapshot.players[playerID], ctx, dt);
+        }
     }
+
+};
+
+const draw = (ctx) => {
+
+    // everything is drawn one tick in the past
+    // so subtract some time from Date.now() to interpolate
+    const dt = 1 - (finishInterpTime - Date.now()) / (curTime - prevTime);
+    console.log(dt);
+    
+    drawBackground(ctx, dt);
+    drawBall(ctx, dt);
+    drawPlayers(ctx, dt);
 
 };
 
 const animate = () => {
     animating = true;
-    draw(ctx, game);
+    draw(ctx);
     requestAnimationFrame(animate);
 };
 

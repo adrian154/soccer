@@ -35,7 +35,7 @@ const Client = class {
     }
 
     close(reason) {
-        this.socket.close(reason, 1000);
+        this.socket.close(1000, reason);
     }
 
     terminate() {

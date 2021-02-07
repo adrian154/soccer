@@ -17,7 +17,8 @@ app.get("/game-info", (req, res) => {
         field: config.gamecore.field,
         playerRadius: config.gamecore.player.radius,
         ballRadius: config.gamecore.ball.radius,
-        goals: config.gamecore.goals
+        goals: config.gamecore.goals,
+        tickrate: config.gameserver.ticksPerSecond
     });
 });
 
