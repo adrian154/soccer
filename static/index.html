@@ -4,14 +4,18 @@
     <head>
         <title>Soccer</title>
         <link rel="stylesheet" href="style.css"></link>
+        <meta property="og:site_name" content="Codesoup">
+        <meta property="og:title" content="Codesoup Soccer">
+        <meta property="og:description" content="A web-based multiplayer soccer game">
     </head>
     
     <body>
         <div id="middle">
+            <div id="overlay"><p>WASD: Movement<br>G: Change name</p></div>
             <canvas id="game-canvas" width="500" height="700">Your browser doesn't support the Canvas API and cannot run this game.</canvas>
-            <div id="overlay">
-                <p>WASD: Movement<br>G: Change name</p>
-            </div>
+            <noscript>Sorry, but this game relies on Javascript to run. You'll have to enable it to run this demo.</noscript><br>
+            <span style="float: left;">&copy; 2020 Adrian</span>
+            <span style="float: right;"><a href="https://github.com/adrian154/soccer">Code</a></span>
         </div>
     </body>
 

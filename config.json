@@ -11,8 +11,8 @@
     "gamecore": {
         "ticksPerSecond": 60,
         "field": {
-            "width": 600,
-            "height": 800
+            "width": 450,
+            "height": 700
         },
         "player": {
             "acceleration": 3400,
@@ -28,7 +28,7 @@
         },
         "goals": {
             "height": 50,
-            "width": 250
+            "width": 150
         }
     }
 }

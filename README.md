@@ -18,3 +18,7 @@ To configure secure websockets, simply add an object to the `gameserver` section
     }
 }
 ```
+
+## Try it
+
+I'm hosting a version of this game on my website [here](soccer.codesoup.dev), though it might be offline or not up-to-date.

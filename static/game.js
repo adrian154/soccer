@@ -21,7 +21,7 @@ const debug = Boolean(new URL(window.location).searchParams.get("debug"));
 // game state
 let curSnapshot, prevSnapshot, curTime, prevTime, finishInterpTime;
 let score;
-let gameProperties;
+let gameProperties, scaling;
 let animating = false;
 
 // helpers
