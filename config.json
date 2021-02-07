@@ -6,7 +6,7 @@
         "port": 8080,
         "heartbeatInterval": 1000,
         "maxPlayers": 30,
-        "ticksPerSecond": 20
+        "ticksPerSecond": 60
     },
     "gamecore": {
         "ticksPerSecond": 60,

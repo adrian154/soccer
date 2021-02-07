@@ -16,6 +16,7 @@ const controls = {
 
 let socket;
 let selfID;
+const debug = Boolean(new URL(window.location).searchParams.get("debug"));
 
 // game state
 let curSnapshot, prevSnapshot, curTime, prevTime, finishInterpTime;
@@ -54,7 +55,7 @@ const setupSocket = (socket) => {
         score = payload.score;
         finishInterpTime = Date.now() + (curTime - prevTime);
 
-        console.log("tick");
+        if(debug) console.log("tick");
         if(!animating && prevSnapshot && curSnapshot) {
             animate();
         }
@@ -153,7 +154,7 @@ const draw = (ctx) => {
     // everything is drawn one tick in the past
     // so subtract some time from Date.now() to interpolate
     const dt = 1 - (finishInterpTime - Date.now()) / (curTime - prevTime);
-    console.log(dt);
+    if(debug) console.log(dt);
     
     drawBackground(ctx, dt);
     drawBall(ctx, dt);
