@@ -112,6 +112,8 @@ module.exports = class {
                     let overlap = 2 * config.player.radius - dist;
                     nextPosX -= overlap * dx / dist;
                     nextPosY -= overlap * dy / dist;
+                    player2.pos.x += overlap * dx / dist;
+                    player2.pos.y += overlap * dy / dist;
                 }
                 
             }
@@ -152,8 +154,7 @@ module.exports = class {
 
             // if they intersect...
             if(distSq < minDistSq) {
-                
-                // de-overlap
+
                 const dist = Math.sqrt(distSq);
 
                 // reflect ball with own speed
@@ -170,6 +171,8 @@ module.exports = class {
                 const overlap = config.ball.radius + config.player.radius - dist;
                 nextPosX += overlap * dx / dist;
                 nextPosY += overlap * dy / dist;
+                player.pos.x -= overlap * dx / dist;
+                player.pos.y -= overlap * dy / dist;
 
             }
 
