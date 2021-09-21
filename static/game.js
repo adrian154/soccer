@@ -148,14 +148,25 @@ const drawPlayers = (ctx, dt) => {
 
 const draw = (ctx) => {
 
-    // everything is drawn one tick in the past
-    // so subtract some time from Date.now() to interpolate
-    const dt = 1 - (finishInterpTime - Date.now()) / (curTime - prevTime);
-    if(debug) console.log(dt);
+    if(socket.ws.readyState !== WebSocket.OPEN) {
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.textAlign = "center";
+        ctx.font = "24px sans-serif";
+        ctx.fillText("connection closed, try reloading :(", canvas.width / 2, canvas.height / 2);
+
+    } else {
+
+        // everything is drawn one tick in the past
+        // so subtract some time from Date.now() to interpolate
+        const dt = 1 - (finishInterpTime - Date.now()) / (curTime - prevTime);
+        if(debug) console.log(dt);
+        
+        drawBackground(ctx, dt);
+        drawBall(ctx, dt);
+        drawPlayers(ctx, dt);
     
-    drawBackground(ctx, dt);
-    drawBall(ctx, dt);
-    drawPlayers(ctx, dt);
+    }
 
 };
 
@@ -182,7 +193,7 @@ const handleKey = (key, state) => {
 
 window.addEventListener("keydown", (event) => {
     handleKey(event.code, true);
-    if(event.key === "g") {
+    if(event.key === "g" || event.key === "G") {
         modal.style.display = "block";
     }
 });

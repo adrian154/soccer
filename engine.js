@@ -161,7 +161,7 @@ module.exports = class {
                 const massFactor = config.player.mass / config.ball.mass;
                 const vdx = (ball.vel.x - player.vel.x * massFactor);
                 const vdy = (ball.vel.y - player.vel.y * massFactor);
-                const ballSpeed = Math.sqrt(vdx * vdx + vdy * vdy);
+                const ballSpeed = Math.sqrt(vdx * vdx + vdy * vdy) * config.ball.bounciness;
 
                 // update velocity
                 ball.vel.x = ballSpeed * dx / dist;

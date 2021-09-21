@@ -5,13 +5,12 @@ body, html {
 
 body {
     margin: 0;
+    display: flex;
 }
 
-#middle {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+#game {
+    position: relative;
+    margin: auto;
 }
 
 #game-canvas {
